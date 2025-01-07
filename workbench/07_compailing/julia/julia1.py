@@ -8,6 +8,11 @@ from typing import Callable
 from PIL import Image
 
 
+DESIRED_WIDTH = 1000
+MAX_ITERATIONS = 300
+EXPECTED_SUM_ITERATIONS = 33219980
+
+
 def show_greyscale(output_raw: list[int], width: int, height: int) -> None:
     """Convert list to array, show using PIL
 
@@ -19,7 +24,7 @@ def show_greyscale(output_raw: list[int], width: int, height: int) -> None:
     # convert our output to PIL-compatible input
     # scale to [0...255]
     max_iterations = float(max(output_raw))
-    print(max_iterations)
+    logger.info(f"{max_iterations=}")
     scale_factor = float(max_iterations)
     scaled = [int(o / scale_factor * 255) for o in output_raw]
     output = array.array("B", scaled)  # array of unsigned ints
@@ -160,12 +165,12 @@ def calc_pure_python(
     logger.info(f"{julia1_fn.__name__} took, {secs} [sec]")
 
     assert (
-        sum(output) == 33219980
+        sum(output) == EXPECTED_SUM_ITERATIONS
     )  # this sum is expected for 1000^2 grid with 300 iterations
 
     if draw_output:
-        # show_false_greyscale(output, width, height, max_iterations)
-        show_greyscale(output, width, height)
+        show_false_greyscale(output, width, height)
+        # show_greyscale(output, width, height)
 
 
 if __name__ == "__main__":
@@ -174,7 +179,7 @@ if __name__ == "__main__":
     # set draw_output to True to use PIL to draw an image
     calc_pure_python(
         draw_output=True,
-        desired_width=1000,
-        max_iterations=300,
+        desired_width=DESIRED_WIDTH,
+        max_iterations=MAX_ITERATIONS,
         julia1_fn=calculate_z_serial_purepython,
     )
