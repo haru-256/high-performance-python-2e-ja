@@ -1,12 +1,11 @@
 """Julia set generator without optional PIL-based image drawing"""
 
 import array
-import time
-from loguru import logger
 from typing import Callable
 
+from libs import timefn
+from loguru import logger
 from PIL import Image
-
 
 DESIRED_WIDTH = 1000
 MAX_ITERATIONS = 300
@@ -62,7 +61,7 @@ def show_false_greyscale(output_raw: list[int], width: int, height: int) -> None
 def calculate_z_serial_purepython(
     maxiter: int, zs: list[complex], cs: list[complex]
 ) -> list[int]:
-    """Calculate output list using Julia update rule
+    """Calculate output list using Julia update rule, each cell is a point in the complex plane and value is the number of iterations
 
     Args:
         maxiter: maximum number of iterations
@@ -70,7 +69,7 @@ def calculate_z_serial_purepython(
         cs: list of complex numbers
 
     Returns:
-        _description_
+        calculated output list
     """
     output = [0] * len(zs)
     for i in range(len(zs)):
@@ -135,6 +134,7 @@ def create_coordinates(
     return (x, y), (zs, cs)
 
 
+@timefn
 def calc_pure_python(
     draw_output: bool,
     desired_width: int,
@@ -158,11 +158,7 @@ def calc_pure_python(
 
     logger.info(f"Length of x: {len(x)}")
     logger.info(f"Total elements: {len(zs)}")
-    start_time = time.perf_counter()
     output = julia1_fn(max_iterations, zs, cs)
-    end_time = time.perf_counter()
-    secs = end_time - start_time
-    logger.info(f"{julia1_fn.__name__} took, {secs} [sec]")
 
     assert (
         sum(output) == EXPECTED_SUM_ITERATIONS
