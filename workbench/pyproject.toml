@@ -29,6 +29,8 @@ dependencies = [
   "bitarray~=3.0.0",
   "mmh3~=5.0.1",
   "loguru~=0.7.3",
+  "pydantic~=2.10.4",
+  "pydantic-settings~=2.7.1",
 ]
 name = "workbench"
 version = "0.1.0"
